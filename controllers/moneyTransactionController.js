@@ -1,4 +1,5 @@
 const bankAccountModel = require("../models/BankAccount")
+const transactionModel = require("../models/transaction")
 
 const sendMoney = async(req,res)=>{
     try{
@@ -18,10 +19,17 @@ const sendMoney = async(req,res)=>{
         const updatedBalanceInfoReciver =  await bankAccountModel.findOneAndUpdate({accountNumber:reciver},{
             $inc:{balance:amount}
         })
+
+        const recordTransaction  = await transactionModel.create({
+            sender,
+            reciver,
+            amount,
+            date:new Date()
+        })
         return res.status(201).json({
             message:"money sent successfully",
-            remainigBalance:updatedBalanceInfosender.balance
-
+            remainigBalance:updatedBalanceInfosender.balance,
+            transactionID:recordTransaction._id
         })
 
 
